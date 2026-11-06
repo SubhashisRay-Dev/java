@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Java Inheritance – Notes (Schildt, Ch. 8)</title>
+<style>
+:root{--bg:#fafaf7;--card:#fff;--ink:#1d2330;--mut:#5b6475;--ac:#c2410c;--ac2:#0f766e;--bd:#e3e1da;--code:#10151f;--codeink:#e6edf7;--hl:#fff4e5;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12151c;--card:#1a1f2a;--ink:#e8ecf3;--mut:#9aa4b6;--ac:#fb923c;--ac2:#2dd4bf;--bd:#2b3242;--code:#0b0e14;--hl:#2a2118}}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 Georgia,'Times New Roman',serif}
+main{max-width:860px;margin:auto;padding:20px 16px 60px}
+h1{font:800 2rem/1.2 system-ui,sans-serif;margin:.2em 0}h2{font:700 1.4rem system-ui,sans-serif;color:var(--ac);border-bottom:2px solid var(--bd);padding-bottom:6px;margin-top:2.2em}
+h3{font:700 1.05rem system-ui,sans-serif;margin:1.3em 0 .3em}
+.sub{color:var(--mut);font-family:system-ui,sans-serif}
+.def{background:var(--hl);border-left:5px solid var(--ac);padding:10px 14px;border-radius:6px;margin:12px 0}
+.def b:first-child{font-family:system-ui,sans-serif;color:var(--ac);text-transform:uppercase;font-size:.75rem;letter-spacing:.06em;display:block}
+.rem{background:var(--card);border:1px dashed var(--ac2);padding:8px 12px;border-radius:6px;font-size:.95rem}
+pre{background:var(--code);color:var(--codeink);padding:12px 14px;border-radius:8px;overflow-x:auto;font:13.5px/1.5 ui-monospace,Menlo,Consolas,monospace;margin:8px 0}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.88em;background:var(--hl);padding:1px 5px;border-radius:4px}
+pre.out{border-left:4px solid var(--ac2);background:var(--card);color:var(--ink);border:1px solid var(--bd);border-left:4px solid var(--ac2)}
+.lbl{font:700 .72rem system-ui,sans-serif;color:var(--ac2);text-transform:uppercase;letter-spacing:.06em;margin-top:10px}
+.bad{color:#dc2626}
+details{background:var(--card);border:1px solid var(--bd);border-radius:8px;margin:8px 0;padding:0 12px}
+summary{cursor:pointer;font:600 .92rem system-ui,sans-serif;padding:9px 0;color:var(--ac2)}
+details ul,details ol{margin:0 0 10px;padding-left:20px}details li{margin:4px 0}
+.fig{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:10px;margin:12px 0;text-align:center}
+.fig svg{max-width:100%;height:auto}.fig small{display:block;color:var(--mut);font-family:system-ui,sans-serif}
+.w{overflow-x:auto}table{border-collapse:collapse;width:100%;font:.86rem system-ui,sans-serif}
+th,td{border:1px solid var(--bd);padding:5px 8px;text-align:left}th{background:var(--hl)}
+.kw{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}.kw span{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:6px 10px;font:.85rem system-ui,sans-serif}.kw b{color:var(--ac)}
+svg text{font-family:system-ui,sans-serif;fill:var(--ink)}svg .bx{fill:var(--card);stroke:var(--ac2);stroke-width:1.5}svg .ln{stroke:var(--mut);stroke-width:1.5;fill:none}
+html{scroll-behavior:smooth}
+nav#toc{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;margin:0 -16px 10px;background:var(--bg);border-bottom:1px solid var(--bd);padding:0 16px}
+nav#toc details{border:0;background:none;padding:0;margin:0}nav#toc summary{font-weight:700;color:var(--ac)}
+nav#toc div{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:4px 12px;padding-bottom:10px;max-height:55vh;overflow:auto}
+nav#toc a{font:.85rem system-ui,sans-serif;color:var(--ink);text-decoration:none;padding:3px 6px;border-radius:5px}nav#toc a:hover{background:var(--hl)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:30}
+.cl{display:block;white-space:pre;border-radius:3px}
+.crit{cursor:pointer;background:rgba(251,146,60,.15);border-left:3px solid var(--ac);margin-left:-8px;padding-left:5px}
+.crit::before{content:"▸ ";color:var(--ac)}.crit.open::before{content:"▾ "}
+.cn{white-space:normal;background:var(--hl);color:var(--ink);font:.85rem/1.45 system-ui,sans-serif;padding:6px 10px;margin:2px 0 4px 14px;border-radius:6px;border-left:3px solid var(--ac2)}
+.on{background:rgba(45,212,191,.35)!important;outline:1px solid var(--ac2)}
+.demo{background:var(--card);border:1px solid var(--ac2);border-radius:8px;padding:10px 12px;margin:8px 0;font:.9rem system-ui,sans-serif}
+.demo button{background:var(--ac2);color:#fff;border:0;border-radius:6px;padding:5px 12px;margin-left:6px;cursor:pointer;font-weight:600}.demo button:disabled{opacity:.4}
+.dn{margin:8px 0;min-height:1.4em}.dout{min-height:1.4em;margin:6px 0 0}
+</style></head><body><main><p class="sub">Java: The Complete Reference, 7th Ed. · Herbert Schildt · Chapter 8 · pp. 157–182</p><h1>🧬 Inheritance</h1><p class="sub">Use the <b>☰ Topics</b> bar to jump to any section. Tap any <b>▸ marked line</b> in a code block for a dropdown explanation, and press <b>Step ▶</b> in a demo box to run the program line by line. All programs are exactly as printed in the book.</p><h2>1. Inheritance Basics</h2><div class="def"><b>Definition</b><b>Inheritance</b> allows hierarchical classification. A general class (the <b>superclass</b>) defines common traits; a more specific class (the <b>subclass</b>) inherits all its instance variables and methods and adds its own. Use the <code>extends</code> keyword.</div><pre>class subclass-name extends superclass-name {
+  // body of class
+}</pre><div class="fig"><svg viewBox="0 0 520 150" width="520"><defs><marker id="m" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0L8,4L0,8z" fill="#888"/></marker></defs><rect class="bx" x="190" y="6" width="140" height="30" rx="6"/><text x="260" y="26" text-anchor="middle" font-size="13">Box (superclass)</text><rect class="bx" x="190" y="60" width="140" height="30" rx="6"/><text x="260" y="80" text-anchor="middle" font-size="13">BoxWeight</text><rect class="bx" x="190" y="114" width="140" height="30" rx="6"/><text x="260" y="134" text-anchor="middle" font-size="13">Shipment</text><path class="ln" d="M260 60V38M260 114V92" marker-end="url(#m)"/><text x="345" y="52" font-size="11">extends (adds weight)</text><text x="345" y="106" font-size="11">extends (adds cost)</text><text x="10" y="80" font-size="11">Each subclass inherits</text><text x="10" y="96" font-size="11">everything above it</text></svg><small>Fig 1: A multilevel hierarchy (see section 7)</small></div><div class="lbl">Program 1 · SimpleInheritance</div><pre>// A simple example of inheritance.
+
+// Create a superclass.
+class A {
+  int i, j;
+
+  void showij() {
+    System.out.println("i and j: " + i + " " + j);
+  }
+}
+
+// Create a subclass by extending class A.
+class B extends A {
+  int k;
+
+  void showk() {
+    System.out.println("k: " + k);
+  }
+  void sum() {
+    System.out.println("i+j+k: " + (i+j+k));
+  }
+}
+
+class SimpleInheritance {
+  public static void main(String args[]) {
+    A superOb = new A();
+    B subOb = new B();
+
+    // The superclass may be used by itself.
+    superOb.i = 10;
+    superOb.j = 20;
+    System.out.println("Contents of superOb: ");
+    superOb.showij();
+    System.out.println();
+
+    /* The subclass has access to all public members of
+       its superclass. */
+    subOb.i = 7;
+    subOb.j = 8;
+    subOb.k = 9;
+    System.out.println("Contents of subOb: ");
+    subOb.showij();
+    subOb.showk();
+    System.out.println();
+
+    System.out.println("Sum of i, j and k in subOb:");
+    subOb.sum();
+  }
+}</pre><pre class="out">Contents of superOb:
+i and j: 10 20
+
+Contents of subOb:
+i and j: 7 8
+k: 9
+
+Sum of i, j and k in subOb:
+i+j+k: 24</pre><p>B includes all members of A, so <code>subOb</code> can use <code>i</code>, <code>j</code> and <code>showij()</code>, and <code>sum()</code> uses i and j directly. A is still an independent class, and a subclass can itself be a superclass.</p><div class="rem"><b>Rules:</b> only <b>one</b> superclass per subclass (no multiple inheritance of classes); a hierarchy of any depth is fine; no class can be a superclass of itself.</div><h2>2. Member Access and Inheritance</h2><div class="def"><b>Definition</b>A subclass includes all members of its superclass, but it <b>cannot access members declared <code>private</code></b> in the superclass.</div><div class="lbl">Program 2 · Access <span class="bad">(will not compile)</span></div><pre>/* In a class hierarchy, private members remain
+   private to their class.
+
+   This program contains an error and will not
+   compile.
+*/
+
+// Create a superclass.
+class A {
+  int i; // public by default
+  private int j; // private to A
+
+  void setij(int x, int y) {
+    i = x;
+    j = y;
+  }
+}
+
+// A's j is not accessible here.
+class B extends A {
+  int total;
+  void sum() {
+    total = i + j; // ERROR, j is not accessible here
+  }
+}
+
+class Access {
+  public static void main(String args[]) {
+    B subOb = new B();
+
+    subOb.setij(10, 12);
+
+    subOb.sum();
+    System.out.println("Total is " + subOb.total);
+  }
+}</pre><p>The reference to <code>j</code> inside <code>sum()</code> of B is an access violation: private members are accessible only inside their own class.</p><div class="rem"><b>REMEMBER:</b> a private member remains private to its class. It is not accessible by any code outside its class, including subclasses.</div><h2>3. A More Practical Example (Box → BoxWeight)</h2><p>Box (width, height, depth) is extended with a fourth component, <code>weight</code>.</p><div class="lbl">Program 3 · DemoBoxWeight</div><pre>// This program uses inheritance to extend Box.
+class Box {
+  double width;
+  double height;
+  double depth;
+
+  // construct clone of an object
+  Box(Box ob) { // pass object to constructor
+    width = ob.width;
+    height = ob.height;
+    depth = ob.depth;
+  }
+
+  // constructor used when all dimensions specified
+  Box(double w, double h, double d) {
+    width = w;
+    height = h;
+    depth = d;
+  }
+
+  // constructor used when no dimensions specified
+  Box() {
+    width = -1; // use -1 to indicate
+    height = -1; // an uninitialized
+    depth = -1; // box
+  }
+
+  // constructor used when cube is created
+  Box(double len) {
+    width = height = depth = len;
+  }
+
+  // compute and return volume
+  double volume() {
+    return width * height * depth;
+  }
+}
+
+// Here, Box is extended to include weight.
+class BoxWeight extends Box {
+  double weight; // weight of box
+
+  // constructor for BoxWeight
+  BoxWeight(double w, double h, double d, double m) {
+    width = w;
+    height = h;
+    depth = d;
+    weight = m;
+  }
+}
+
+class DemoBoxWeight {
+  public static void main(String args[]) {
+    BoxWeight mybox1 = new BoxWeight(10, 20, 15, 34.3);
+    BoxWeight mybox2 = new BoxWeight(2, 3, 4, 0.076);
+    double vol;
+
+    vol = mybox1.volume();
+    System.out.println("Volume of mybox1 is " + vol);
+    System.out.println("Weight of mybox1 is " + mybox1.weight);
+    System.out.println();
+
+    vol = mybox2.volume();
+    System.out.println("Volume of mybox2 is " + vol);
+    System.out.println("Weight of mybox2 is " + mybox2.weight);
+  }
+}</pre><pre class="out">Volume of mybox1 is 3000.0
+Weight of mybox1 is 34.3
+
+Volume of mybox2 is 24.0
+Weight of mybox2 is 0.076</pre><p>BoxWeight need not re-create Box’s features. Once a superclass defines common attributes, any number of specialised subclasses can be built from it, for example:</p><pre>// Here, Box is extended to include color.
+class ColorBox extends Box {
+  int color; // color of box
+
+  ColorBox(double w, double h, double d, int c) {
+    width = w;
+    height = h;
+    depth = d;
+    color = c;
+  }
+}</pre><h2>4. A Superclass Variable Can Reference a Subclass Object</h2><div class="def"><b>Definition</b>A reference variable of a superclass can be assigned a reference to <b>any subclass</b> object. The <b>type of the reference variable</b> (not the object) decides which members can be accessed.</div><div class="fig"><svg viewBox="0 0 520 120" width="520"><rect class="bx" x="10" y="10" width="140" height="34" rx="6"/><text x="80" y="32" text-anchor="middle" font-size="12">Box plainbox (ref)</text><rect class="bx" x="340" y="10" width="170" height="100" rx="6"/><text x="425" y="30" text-anchor="middle" font-size="12" font-weight="700">BoxWeight object</text><text x="425" y="52" text-anchor="middle" font-size="11">width, height, depth (Box part)</text><text x="425" y="70" text-anchor="middle" font-size="11">weight (BoxWeight part)</text><path class="ln" d="M150 27H338" marker-end="url(#m)"/><text x="244" y="20" text-anchor="middle" font-size="11">plainbox = weightbox</text><text x="10" y="80" font-size="11">Box reference sees only the Box part:</text><text x="10" y="96" font-size="11">plainbox.weight is a compile error.</text></svg><small>Fig 2: Box reference to a BoxWeight object</small></div><div class="lbl">Program 4 · RefDemo</div><pre>class RefDemo {
+  public static void main(String args[]) {
+    BoxWeight weightbox = new BoxWeight(3, 5, 7, 8.37);
+    Box plainbox = new Box();
+    double vol;
+
+    vol = weightbox.volume();
+    System.out.println("Volume of weightbox is " + vol);
+    System.out.println("Weight of weightbox is " +
+                       weightbox.weight);
+    System.out.println();
+
+    // assign BoxWeight reference to Box reference
+    plainbox = weightbox;
+
+    vol = plainbox.volume(); // OK, volume() defined in Box
+    System.out.println("Volume of plainbox is " + vol);
+
+    /* The following statement is invalid because plainbox
+       does not define a weight member. */
+//  System.out.println("Weight of plainbox is " + plainbox.weight);
+  }
+}</pre><p>Because the superclass has no knowledge of what a subclass adds, <code>plainbox</code> cannot see <code>weight</code>, so that line is commented out. (The book prints no output for this program.)</p><h2>5. Using super</h2><div class="def"><b>Definition</b><b>super</b> refers to the immediate superclass. It has two forms: (1) <code>super(arg-list);</code> calls a superclass constructor, and (2) <code>super.member</code> accesses a superclass member hidden by a subclass member.</div><h3>5.1 super() to call superclass constructors</h3><p>Duplicating Box’s initialisation in BoxWeight is inefficient and needs access to Box’s data. If Box makes its data private, a subclass can only initialise it via <code>super(arg-list)</code>, which <b>must be the first statement</b> in the subclass constructor.</p><pre>// BoxWeight now uses super to initialize its Box attributes.
+class BoxWeight extends Box {
+  double weight; // weight of box
+
+  // initialize width, height, and depth using super()
+  BoxWeight(double w, double h, double d, double m) {
+    super(w, h, d); // call superclass constructor
+    weight = m;
+  }
+}</pre><p>Since constructors can be overloaded, <code>super()</code> can use any form defined by the superclass; the one matching the arguments runs. Below, width, height and depth are now <b>private</b>.</p><div class="lbl">Program 5 · DemoSuper</div><pre>// A complete implementation of BoxWeight.
+class Box {
+  private double width;
+  private double height;
+  private double depth;
+
+  // construct clone of an object
+  Box(Box ob) { // pass object to constructor
+    width = ob.width;
+    height = ob.height;
+    depth = ob.depth;
+  }
+
+  // constructor used when all dimensions specified
+  Box(double w, double h, double d) {
+    width = w;
+    height = h;
+    depth = d;
+  }
+
+  // constructor used when no dimensions specified
+  Box() {
+    width = -1; // use -1 to indicate
+    height = -1; // an uninitialized
+    depth = -1; // box
+  }
+
+  // constructor used when cube is created
+  Box(double len) {
+    width = height = depth = len;
+  }
+
+  // compute and return volume
+  double volume() {
+    return width * height * depth;
+  }
+}
+
+// BoxWeight now fully implements all constructors.
+class BoxWeight extends Box {
+  double weight; // weight of box
+
+  // construct clone of an object
+  BoxWeight(BoxWeight ob) { // pass object to constructor
+    super(ob);
+    weight = ob.weight;
+  }
+
+  // constructor when all parameters are specified
+  BoxWeight(double w, double h, double d, double m) {
+    super(w, h, d); // call superclass constructor
+    weight = m;
+  }
+
+  // default constructor
+  BoxWeight() {
+    super();
+    weight = -1;
+  }
+
+  // constructor used when cube is created
+  BoxWeight(double len, double m) {
+    super(len);
+    weight = m;
+  }
+}
+
+class DemoSuper {
+  public static void main(String args[]) {
+    BoxWeight mybox1 = new BoxWeight(10, 20, 15, 34.3);
+    BoxWeight mybox2 = new BoxWeight(2, 3, 4, 0.076);
+    BoxWeight mybox3 = new BoxWeight(); // default
+    BoxWeight mycube = new BoxWeight(3, 2);
+    BoxWeight myclone = new BoxWeight(mybox1);
+    double vol;
+
+    vol = mybox1.volume();
+    System.out.println("Volume of mybox1 is " + vol);
+    System.out.println("Weight of mybox1 is " + mybox1.weight);
+    System.out.println();
+
+    vol = mybox2.volume();
+    System.out.println("Volume of mybox2 is " + vol);
+    System.out.println("Weight of mybox2 is " + mybox2.weight);
+    System.out.println();
+
+    vol = mybox3.volume();
+    System.out.println("Volume of mybox3 is " + vol);
+    System.out.println("Weight of mybox3 is " + mybox3.weight);
+    System.out.println();
+
+    vol = myclone.volume();
+    System.out.println("Volume of myclone is " + vol);
+    System.out.println("Weight of myclone is " + myclone.weight);
+    System.out.println();
+
+    vol = mycube.volume();
+    System.out.println("Volume of mycube is " + vol);
+    System.out.println("Weight of mycube is " + mycube.weight);
+    System.out.println();
+  }
+}</pre><pre class="out">Volume of mybox1 is 3000.0
+Weight of mybox1 is 34.3
+
+Volume of mybox2 is 24.0
+Weight of mybox2 is 0.076
+
+Volume of mybox3 is -1.0
+Weight of mybox3 is -1.0
+
+Volume of myclone is 3000.0
+Weight of myclone is 34.3
+
+Volume of mycube is 27.0
+Weight of mycube is 2.0</pre><p>Pay special attention to the clone constructor. <code>super(ob)</code> is passed a <b>BoxWeight</b>, yet it invokes <code>Box(Box ob)</code>, because a superclass variable can reference a subclass object:</p><pre>// construct clone of an object
+BoxWeight(BoxWeight ob) { // pass object to constructor
+  super(ob);
+  weight = ob.weight;
+}</pre><div class="rem"><b>Key points:</b> <code>super()</code> always refers to the superclass immediately above the calling class (even in a multilevel hierarchy) and must be the first statement in the subclass constructor.</div><h3>5.2 A second use for super: super.member</h3><p>Acts like <code>this</code>, but always refers to the superclass. Useful when a subclass member <b>hides</b> a superclass member of the same name.</p><div class="lbl">Program 6 · UseSuper</div><pre>// Using super to overcome name hiding.
+class A {
+  int i;
+}
+
+// Create a subclass by extending class A.
+class B extends A {
+  int i; // this i hides the i in A
+
+  B(int a, int b) {
+    super.i = a; // i in A
+    i = b; // i in B
+  }
+
+  void show() {
+    System.out.println("i in superclass: " + super.i);
+    System.out.println("i in subclass: " + i);
+  }
+}
+
+class UseSuper {
+  public static void main(String args[]) {
+    B subOb = new B(1, 2);
+
+    subOb.show();
+  }
+}</pre><pre class="out">i in superclass: 1
+i in subclass: 2</pre><p>super can also call methods that are hidden by a subclass.</p><h2>6. Creating a Multilevel Hierarchy</h2><div class="def"><b>Definition</b>A subclass can be the superclass of another: if C extends B and B extends A, then <b>C inherits all traits of B and A</b>. Here BoxWeight becomes the superclass of <code>Shipment</code>, which adds <code>cost</code>.</div><div class="lbl">Program 7 · DemoShipment</div><pre>// Extend BoxWeight to include shipping costs.
+
+// Start with Box.
+class Box {
+  private double width;
+  private double height;
+  private double depth;
+
+  // construct clone of an object
+  Box(Box ob) { // pass object to constructor
+    width = ob.width;
+    height = ob.height;
+    depth = ob.depth;
+  }
+
+  // constructor used when all dimensions specified
+  Box(double w, double h, double d) {
+    width = w;
+    height = h;
+    depth = d;
+  }
+
+  // constructor used when no dimensions specified
+  Box() {
+    width = -1; // use -1 to indicate
+    height = -1; // an uninitialized
+    depth = -1; // box
+  }
+
+  // constructor used when cube is created
+  Box(double len) {
+    width = height = depth = len;
+  }
+
+  // compute and return volume
+  double volume() {
+    return width * height * depth;
+  }
+}
+
+// Add weight.
+class BoxWeight extends Box {
+  double weight; // weight of box
+
+  // construct clone of an object
+  BoxWeight(BoxWeight ob) { // pass object to constructor
+    super(ob);
+    weight = ob.weight;
+  }
+
+  // constructor when all parameters are specified
+  BoxWeight(double w, double h, double d, double m) {
+    super(w, h, d); // call superclass constructor
+    weight = m;
+  }
+
+  // default constructor
+  BoxWeight() {
+    super();
+    weight = -1;
+  }
+
+  // constructor used when cube is created
+  BoxWeight(double len, double m) {
+    super(len);
+    weight = m;
+  }
+}
+
+// Add shipping costs.
+class Shipment extends BoxWeight {
+  double cost;
+
+  // construct clone of an object
+  Shipment(Shipment ob) { // pass object to constructor
+    super(ob);
+    cost = ob.cost;
+  }
+
+  // constructor when all parameters are specified
+  Shipment(double w, double h, double d,
+           double m, double c) {
+    super(w, h, d, m); // call superclass constructor
+    cost = c;
+  }
+
+  // default constructor
+  Shipment() {
+    super();
+    cost = -1;
+  }
+
+  // constructor used when cube is created
+  Shipment(double len, double m, double c) {
+    super(len, m);
+    cost = c;
+  }
+}
+
+class DemoShipment {
+  public static void main(String args[]) {
+    Shipment shipment1 =
+             new Shipment(10, 20, 15, 10, 3.41);
+    Shipment shipment2 =
+             new Shipment(2, 3, 4, 0.76, 1.28);
+
+    double vol;
+
+    vol = shipment1.volume();
+    System.out.println("Volume of shipment1 is " + vol);
+    System.out.println("Weight of shipment1 is "
+                        + shipment1.weight);
+    System.out.println("Shipping cost: $" + shipment1.cost);
+    System.out.println();
+
+    vol = shipment2.volume();
+    System.out.println("Volume of shipment2 is " + vol);
+    System.out.println("Weight of shipment2 is "
+                        + shipment2.weight);
+    System.out.println("Shipping cost: $" + shipment2.cost);
+  }
+}</pre><pre class="out">Volume of shipment1 is 3000.0
+Weight of shipment1 is 10.0
+Shipping cost: $3.41
+
+Volume of shipment2 is 24.0
+Weight of shipment2 is 0.76
+Shipping cost: $1.28</pre><p>Shipment reuses Box and BoxWeight and adds only its own data: <b>code reuse</b>. <code>super()</code> in Shipment calls BoxWeight’s constructor; the one in BoxWeight calls Box’s. If a superclass constructor needs parameters, all subclasses must pass them <b>“up the line”</b>.</p><div class="rem"><b>NOTE:</b> the book shows all three classes in one file for convenience. Normally each class goes in its own file.</div><h2>7. When Constructors Are Called</h2><div class="def"><b>Definition</b>In a class hierarchy, constructors are called in <b>order of derivation, from superclass to subclass</b>. Since <code>super()</code> is the first statement, this holds whether or not it is written. If it is omitted, the default (parameterless) constructor of each superclass runs.</div><div class="fig"><svg viewBox="0 0 520 90" width="520"><rect class="bx" x="10" y="25" width="130" height="40" rx="6"/><text x="75" y="50" text-anchor="middle" font-size="13">A() runs 1st</text><rect class="bx" x="190" y="25" width="130" height="40" rx="6"/><text x="255" y="50" text-anchor="middle" font-size="13">B() runs 2nd</text><rect class="bx" x="370" y="25" width="130" height="40" rx="6"/><text x="435" y="50" text-anchor="middle" font-size="13">C() runs 3rd</text><path class="ln" d="M140 45H188M320 45H368" marker-end="url(#m)"/><text x="260" y="82" text-anchor="middle" font-size="11">order of derivation: superclass → subclass (new C() starts at C, which calls up via super())</text></svg><small>Fig 3: Constructor call order</small></div><div class="lbl">Program 8 · CallingCons</div><pre>// Demonstrate when constructors are called.
+
+// Create a super class.
+class A {
+  A() {
+    System.out.println("Inside A's constructor.");
+  }
+}
+
+// Create a subclass by extending class A.
+class B extends A {
+  B() {
+    System.out.println("Inside B's constructor.");
+  }
+}
+
+// Create another subclass by extending B.
+class C extends B {
+  C() {
+    System.out.println("Inside C's constructor.");
+  }
+}
+
+class CallingCons {
+  public static void main(String args[]) {
+    C c = new C();
+  }
+}</pre><pre class="out">Inside A’s constructor
+Inside B’s constructor
+Inside C’s constructor</pre><p>This makes sense: a superclass has no knowledge of any subclass, so its initialisation is separate from, and possibly prerequisite to, the subclass’s.</p><h2>8. Method Overriding</h2><div class="def"><b>Definition</b>When a subclass method has the <b>same name and type signature</b> as a superclass method, it <b>overrides</b> it. Calls from the subclass always use the subclass version; the superclass version is hidden.</div><div class="lbl">Program 9 · Override</div><pre>// Method overriding.
+class A {
+  int i, j;
+  A(int a, int b) {
+    i = a;
+    j = b;
+  }
+
+  // display i and j
+  void show() {
+    System.out.println("i and j: " + i + " " + j);
+  }
+}
+
+class B extends A {
+  int k;
+
+  B(int a, int b, int c) {
+    super(a, b);
+    k = c;
+  }
+
+  // display k – this overrides show() in A
+  void show() {
+    System.out.println("k: " + k);
+  }
+}
+
+class Override {
+  public static void main(String args[]) {
+    B subOb = new B(1, 2, 3);
+
+    subOb.show(); // this calls show() in B
+  }
+}</pre><pre class="out">k: 3</pre><p>To reach the superclass version of an overridden method, use <code>super</code>. This version of B displays all instance variables:</p><pre>class B extends A {
+  int k;
+
+  B(int a, int b, int c) {
+    super(a, b);
+    k = c;
+  }
+  void show() {
+    super.show(); // this calls A's show()
+    System.out.println("k: " + k);
+  }
+}</pre><pre class="out">i and j: 1 2
+k: 3</pre><div class="rem">Overriding occurs <b>only when names and type signatures are identical</b>. Otherwise the methods are simply <b>overloaded</b>.</div><div class="lbl">Program 10 · Overloading, not overriding</div><pre>// Methods with differing type signatures are overloaded – not
+// overridden.
+class A {
+  int i, j;
+
+  A(int a, int b) {
+    i = a;
+    j = b;
+  }
+
+  // display i and j
+  void show() {
+    System.out.println("i and j: " + i + " " + j);
+  }
+}
+
+// Create a subclass by extending class A.
+class B extends A {
+  int k;
+
+  B(int a, int b, int c) {
+    super(a, b);
+    k = c;
+  }
+
+  // overload show()
+  void show(String msg) {
+    System.out.println(msg + k);
+  }
+}
+
+class Override {
+  public static void main(String args[]) {
+    B subOb = new B(1, 2, 3);
+
+    subOb.show("This is k: "); // this calls show() in B
+    subOb.show(); // this calls show() in A
+  }
+}</pre><pre class="out">This is k: 3
+i and j: 1 2</pre><p>B’s <code>show(String msg)</code> has a different signature from A’s <code>show()</code>, so no overriding (or name hiding) takes place; it just overloads.</p><h2>9. Dynamic Method Dispatch</h2><div class="def"><b>Definition</b><b>Dynamic method dispatch</b> is the mechanism by which a call to an overridden method is resolved at <b>run time</b>, not compile time. It is how Java implements <b>run-time polymorphism</b>. It is the <b>type of the object being referred to</b> (not the type of the reference variable) that decides which version runs.</div><div class="fig"><svg viewBox="0 0 520 150" width="520"><rect class="bx" x="10" y="55" width="90" height="34" rx="6"/><text x="55" y="77" text-anchor="middle" font-size="13">A r</text><rect class="bx" x="300" y="6" width="200" height="34" rx="6"/><text x="400" y="28" text-anchor="middle" font-size="12">A object → A’s callme()</text><rect class="bx" x="300" y="58" width="200" height="34" rx="6"/><text x="400" y="80" text-anchor="middle" font-size="12">B object → B’s callme()</text><rect class="bx" x="300" y="110" width="200" height="34" rx="6"/><text x="400" y="132" text-anchor="middle" font-size="12">C object → C’s callme()</text><path class="ln" d="M100 66L298 23M100 72H298M100 80L298 127" marker-end="url(#m)"/><text x="200" y="146" text-anchor="middle" font-size="11">r = a / b / c : object type decides at run time</text></svg><small>Fig 4: One reference, three behaviours</small></div><div class="lbl">Program 11 · Dispatch</div><pre>// Dynamic Method Dispatch
+class A {
+  void callme() {
+    System.out.println("Inside A's callme method");
+  }
+}
+
+class B extends A {
+  // override callme()
+  void callme() {
+    System.out.println("Inside B's callme method");
+  }
+}
+
+class C extends A {
+  // override callme()
+  void callme() {
+    System.out.println("Inside C's callme method");
+  }
+}
+
+class Dispatch {
+  public static void main(String args[]) {
+    A a = new A(); // object of type A
+    B b = new B(); // object of type B
+    C c = new C(); // object of type C
+    A r; // obtain a reference of type A
+
+    r = a; // r refers to an A object
+    r.callme(); // calls A's version of callme
+
+    r = b; // r refers to a B object
+    r.callme(); // calls B's version of callme
+
+    r = c; // r refers to a C object
+    r.callme(); // calls C's version of callme
+  }
+}</pre><pre class="out">Inside A’s callme method
+Inside B’s callme method
+Inside C’s callme method</pre><p>Had the version been decided by the type of <code>r</code>, you would see three calls to A’s <code>callme()</code>.</p><div class="rem"><b>NOTE:</b> overridden methods in Java are similar to virtual functions in C++ and C#.</div><h3>Why overridden methods?</h3><p>They support run-time polymorphism (“one interface, multiple methods”): a general class specifies methods common to all its derivatives, while subclasses define the specific implementation. Superclass and subclasses form a hierarchy from lesser to greater specialisation; combined with overriding, the superclass defines the general form of the methods used by all its subclasses. Existing code can call methods on instances of new classes without recompiling.</p><h2>10. Applying Method Overriding</h2><p>A superclass <code>Figure</code> stores dimensions and defines <code>area()</code>; subclasses <code>Rectangle</code> and <code>Triangle</code> override it.</p><div class="lbl">Program 12 · FindAreas</div><pre>// Using run-time polymorphism.
+class Figure {
+  double dim1;
+  double dim2;
+
+  Figure(double a, double b) {
+    dim1 = a;
+    dim2 = b;
+  }
+
+  double area() {
+    System.out.println("Area for Figure is undefined.");
+    return 0;
+  }
+}
+
+class Rectangle extends Figure {
+  Rectangle(double a, double b) {
+    super(a, b);
+  }
+
+  // override area for rectangle
+  double area() {
+    System.out.println("Inside Area for Rectangle.");
+    return dim1 * dim2;
+  }
+}
+
+class Triangle extends Figure {
+  Triangle(double a, double b) {
+    super(a, b);
+  }
+
+  // override area for right triangle
+  double area() {
+    System.out.println("Inside Area for Triangle.");
+    return dim1 * dim2 / 2;
+  }
+}
+
+class FindAreas {
+  public static void main(String args[]) {
+    Figure f = new Figure(10, 10);
+    Rectangle r = new Rectangle(9, 5);
+    Triangle t = new Triangle(10, 8);
+
+    Figure figref;
+
+    figref = r;
+    System.out.println("Area is " + figref.area());
+
+    figref = t;
+    System.out.println("Area is " + figref.area());
+
+    figref = f;
+    System.out.println("Area is " + figref.area());
+  }
+}</pre><pre class="out">Inside Area for Rectangle.
+Area is 45
+Inside Area for Triangle.
+Area is 40
+Area for Figure is undefined.
+Area is 0</pre><p>One consistent interface (<code>area()</code>) works for several related types of objects.</p><h2>11. Using Abstract Classes</h2><div class="def"><b>Definition</b>An <b>abstract method</b> has no body and must be overridden by subclasses: <code>abstract type name(parameter-list);</code>. Any class with an abstract method must itself be declared <code>abstract</code>. An abstract class <b>cannot be instantiated</b> with <code>new</code>, but you can create <b>references</b> to it.</div><ul><li>No abstract constructors and no abstract static methods.</li><li>A subclass must implement all abstract methods, or be declared abstract itself.</li><li>Abstract classes may also contain concrete methods.</li></ul><div class="lbl">Program 13 · AbstractDemo</div><pre>// A Simple demonstration of abstract.
+abstract class A {
+  abstract void callme();
+
+  // concrete methods are still allowed in abstract classes
+  void callmetoo() {
+    System.out.println("This is a concrete method.");
+  }
+}
+
+class B extends A {
+  void callme() {
+    System.out.println("B's implementation of callme.");
+  }
+}
+
+class AbstractDemo {
+  public static void main(String args[]) {
+    B b = new B();
+
+    b.callme();
+    b.callmetoo();
+  }
+}</pre><p>No objects of class A are declared; abstract classes cannot be instantiated but can hold as much implementation as needed.</p><div class="lbl">Program 14 · AbstractAreas (Figure made abstract)</div><pre>// Using abstract methods and classes.
+abstract class Figure {
+  double dim1;
+  double dim2;
+
+  Figure(double a, double b) {
+    dim1 = a;
+    dim2 = b;
+  }
+
+  // area is now an abstract method
+  abstract double area();
+}
+
+class Rectangle extends Figure {
+  Rectangle(double a, double b) {
+    super(a, b);
+  }
+
+  // override area for rectangle
+  double area() {
+    System.out.println("Inside Area for Rectangle.");
+    return dim1 * dim2;
+  }
+}
+
+class Triangle extends Figure {
+  Triangle(double a, double b) {
+    super(a, b);
+  }
+
+  // override area for right triangle
+  double area() {
+    System.out.println("Inside Area for Triangle.");
+    return dim1 * dim2 / 2;
+  }
+}
+
+class AbstractAreas {
+  public static void main(String args[]) {
+    // Figure f = new Figure(10, 10); // illegal now
+    Rectangle r = new Rectangle(9, 5);
+    Triangle t = new Triangle(10, 8);
+    Figure figref; // this is OK, no object is created
+
+    figref = r;
+    System.out.println("Area is " + figref.area());
+
+    figref = t;
+    System.out.println("Area is " + figref.area());
+  }
+}</pre><p>Objects of type Figure can no longer be created, and every subclass must override <code>area()</code> (otherwise a compile-time error). A <b>reference</b> of type Figure is fine and is what enables run-time dispatch.</p><h2>12. Using final with Inheritance</h2><p><code>final</code> has three uses: a named constant (previous chapter), and two for inheritance:</p><h3>12.1 final prevents overriding</h3><pre>class A {
+  final void meth() {
+    System.out.println("This is a final method.");
+  }
+}
+
+class B extends A {
+  void meth() { // ERROR! Can't override.
+    System.out.println("Illegal!");
+  }
+}</pre><p>A final method cannot be overridden (compile-time error). Final methods can be <b>inlined</b> by the compiler. Normal calls are resolved at run time (<b>late binding</b>); calls to final methods are resolved at compile time (<b>early binding</b>).</p><h3>12.2 final prevents inheritance</h3><pre>final class A {
+  // ...
+}
+
+// The following class is illegal.
+class B extends A { // ERROR! Can't subclass A
+  // ...
+}</pre><p>Declaring a class final implicitly makes all its methods final. A class cannot be both <code>abstract</code> and <code>final</code>, since an abstract class relies on subclasses to complete it.</p><h2>13. The Object Class</h2><div class="def"><b>Definition</b><code>Object</code> is the special class that is the <b>superclass of all other classes</b>. An <code>Object</code> reference can refer to any object (and any array).</div><div class="w"><table><tr><th>Method</th><th>Purpose</th></tr><tr><td>Object clone( )</td><td>Creates a new object the same as the one being cloned.</td></tr><tr><td>boolean equals(Object object)</td><td>Determines whether one object is equal to another.</td></tr><tr><td>void finalize( )</td><td>Called before an unused object is recycled.</td></tr><tr><td>Class getClass( )</td><td>Obtains the class of an object at run time.</td></tr><tr><td>int hashCode( )</td><td>Returns the hash code of the invoking object.</td></tr><tr><td>void notify( )</td><td>Resumes a thread waiting on the invoking object.</td></tr><tr><td>void notifyAll( )</td><td>Resumes all threads waiting on the invoking object.</td></tr><tr><td>String toString( )</td><td>Returns a string that describes the object.</td></tr><tr><td>void wait( ) / wait(long milliseconds) / wait(long milliseconds, int nanoseconds)</td><td>Waits on another thread of execution.</td></tr></table></div><p><code>getClass()</code>, <code>notify()</code>, <code>notifyAll()</code> and <code>wait()</code> are <b>final</b>; the others may be overridden. <code>equals()</code> compares contents (equality definition varies by type). <code>toString()</code> describes the object and is called automatically by <code>println()</code>; many classes override it.</p><h2>Quick Revision</h2><div class="kw"><span><b>extends</b> → subclass</span><span>private members are <b>not</b> inherited-accessible</span><span><b>super(...)</b> first statement</span><span><b>super.member</b> reaches hidden member</span><span>Constructors: <b>superclass first</b></span><span>Same signature = <b>override</b>; different = overload</span><span>Object type decides at run time</span><span><b>abstract</b>: no objects, must override</span><span><b>final</b>: no override / no inherit</span><span><b>Object</b> is the root class</span></div></main>
+<script>
+(function(){
+var $=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+var nav=document.createElement('nav');nav.id='toc';nav.innerHTML='<details><summary>☰ Topics (tap to jump)</summary><div></div></details>';
+var box=nav.querySelector('div');
+$('main h2').forEach(function(h,i){h.id='s'+(i+1);var a=document.createElement('a');a.href='#s'+(i+1);a.textContent=h.textContent;box.appendChild(a)});
+document.querySelector('main').prepend(nav);
+box.addEventListener('click',function(e){if(e.target.tagName=='A')nav.querySelector('details').open=false});
+var pres=$('pre:not(.out)');
+pres.forEach(function(p){var t=p.textContent;p.textContent='';t.split('\n').forEach(function(l){var s=document.createElement('span');s.className='cl';s.textContent=l||' ';p.appendChild(s)})});
+var C=[
+['class B extends A','extends makes B a subclass of A: B inherits A\u2019s i, j and showij() and adds its own members.'],
+['private int j;','private: j is accessible only inside class A, so subclass B cannot use it.'],
+['total = i + j;','ERROR: j is private to A, so this is an access violation and the program will not compile.'],
+['plainbox = weightbox;','Allowed: a Box reference can hold a BoxWeight object. But plainbox can now see only the Box members.'],
+['Weight of plainbox','Invalid, so commented out: the reference type (Box) decides what is accessible, and Box has no weight.'],
+['super(w, h, d);','Calls the superclass constructor Box(w, h, d). Must be the first statement in the subclass constructor.'],
+['super(w, h, d, m);','Passes the values up the line to BoxWeight(w, h, d, m), which in turn calls Box(w, h, d).'],
+['super(ob);','Passes the object up. Box(Box ob) accepts a BoxWeight/Shipment because a superclass variable can reference a subclass object.'],
+['super();','Calls the superclass default constructor.'],
+['super(len);','Calls the one-argument (cube) constructor of the superclass.'],
+['super(len, m);','Calls BoxWeight(len, m), the cube + weight constructor.'],
+['int i; // this i hides','This i hides the i in A (same name in the subclass).'],
+['super.i = a;','super.i accesses the hidden i of the superclass A.'],
+['class Shipment extends BoxWeight','Multilevel: Shipment inherits from BoxWeight, which inherits from Box.'],
+['C c = new C();','Creates a C object. The constructors run A first, then B, then C.'],
+['void show(String msg)','Different signature from A\u2019s show(): this is overloading, not overriding.'],
+['this overrides show() in A','B\u2019s show() has the same name and signature as A\u2019s, so it overrides it.'],
+['super.show();','Calls the superclass version of the overridden method.'],
+['r = b;','Allowed: a superclass reference (A) can refer to a subclass object (B).'],
+['r.callme(); // calls B','Resolved at run time from the object type (B), so B\u2019s callme() runs.'],
+['abstract void callme();','Abstract method: no body. Subclasses must override it.'],
+['abstract double area();','Abstract method: every subclass of Figure must override area().'],
+['abstract class','A class containing an abstract method must be abstract. It cannot be instantiated with new.'],
+['illegal now','Illegal: an abstract class cannot be instantiated.'],
+['Figure figref; // this is OK','A reference to an abstract class is allowed. No object is created; it can point to a subclass object.'],
+['return dim1 * dim2 / 2;','Area of a right triangle: half of base times height.'],
+['final void meth()','final method: cannot be overridden by any subclass.'],
+['final class A','final class: cannot be inherited by any class.'],
+['// ERROR! Can','Compile-time error: you cannot override a final method or extend a final class.']
+];
+pres.forEach(function(p){$('.cl',p).forEach(function(s){var c=C.filter(function(x){return s.textContent.indexOf(x[0])>-1})[0];if(!c)return;s.classList.add('crit');s.title='Tap for help';s.onclick=function(){var n=s.nextSibling;if(n&&n.className=='cn'){n.remove();s.classList.remove('open')}else{n=document.createElement('div');n.className='cn';n.textContent='💡 '+c[1];s.after(n);s.classList.add('open')}}})});
+var D={
+'class SimpleInheritance':{t:'SimpleInheritance',s:[['A superOb = new A();','Create an object of the superclass A.'],['B subOb = new B();','B object holds i, j (inherited) and k.'],['superOb.i = 10;','superOb: i = 10.'],['superOb.j = 20;','superOb: j = 20.'],['Contents of superOb:','Prints the heading.','Contents of superOb:'],['superOb.showij();','Superclass used by itself.','i and j: 10 20'],['subOb.k = 9;','subOb: i = 7, j = 8 (inherited fields), k = 9.'],['Contents of subOb:','Prints the heading.','\nContents of subOb:'],['subOb.showij();','Inherited method showij() runs on the B object.','i and j: 7 8'],['subOb.showk();','','k: 9'],['subOb.sum();','7 + 8 + 9 = 24.','\nSum of i, j and k in subOb:\ni+j+k: 24']]},
+'class RefDemo':{t:'RefDemo (superclass reference)',s:[['BoxWeight weightbox = new','BoxWeight object: width 3, height 5, depth 7, weight 8.37.'],['Box plainbox = new Box();','A separate plain Box (all dimensions -1).'],['vol = weightbox.volume();','3 x 5 x 7 = 105.'],['Weight of weightbox','Prints the weight.','Volume of weightbox is 105.0\nWeight of weightbox is 8.37'],['plainbox = weightbox;','plainbox now refers to the BoxWeight object.'],['vol = plainbox.volume();','OK: volume() is defined in Box, so a Box reference can call it.'],['Volume of plainbox','Prints it.','Volume of plainbox is 105.0'],['Weight of plainbox','Commented out: a Box reference cannot access weight, because the reference type decides what is accessible.']]},
+'class DemoSuper':{t:'DemoSuper (constructor chaining)',s:[['BoxWeight mybox3 = new BoxWeight(); // default','The default constructor BoxWeight() runs.'],['super();','super() calls Box(): width = height = depth = -1.'],['weight = -1;','weight = -1, so volume = -1.0.'],['BoxWeight mycube = new BoxWeight(3, 2);','The two-argument constructor runs.'],['super(len);','Box(len) sets width = height = depth = 3.'],['BoxWeight myclone = new BoxWeight(mybox1);','The clone constructor runs.'],['super(ob);','Box(Box ob) copies width, height, depth from mybox1.'],['weight = ob.weight;','Copies weight too: myclone is 3000.0 / 34.3, like mybox1.']]},
+'class UseSuper':{t:'UseSuper (super.member)',s:[['B subOb = new B(1, 2);','Constructor B(1, 2) is called.'],['super.i = a;','1 is stored in A\u2019s hidden i.'],['i = b;','2 is stored in B\u2019s own i.'],['subOb.show();','Call show().'],['i in superclass','super.i reads A\u2019s i.','i in superclass: 1'],['i in subclass','i reads B\u2019s i.','i in subclass: 2']]},
+'class DemoShipment':{t:'DemoShipment (constructor chain up three levels)',s:[['Shipment shipment1 =','Create a Shipment with 10, 20, 15, 10, 3.41.'],['super(w, h, d, m);','Shipment passes w, h, d, m up to BoxWeight.'],['cost = c;','After the parent constructors finish, Shipment sets its own cost = 3.41.'],['vol = shipment1.volume();','Inherited from Box: 10 x 20 x 15 = 3000.0.'],['Shipping cost: $\" + shipment1','Prints the results.','Volume of shipment1 is 3000.0\nWeight of shipment1 is 10.0\nShipping cost: $3.41']]},
+'class CallingCons':{t:'CallingCons (constructor order)',s:[['C c = new C();','Object creation starts and the constructor C() is entered.'],['C() {','C() first calls its superclass constructor B() (implicit super()).'],['B() {','B() first calls its superclass constructor A() (implicit super()).'],['A() {','A() has no further superclass to initialise, so its body runs.'],[`Inside A's`,'A prints first.','Inside A\u2019s constructor'],[`Inside B's`,'A() returns; B\u2019s body runs.','Inside B\u2019s constructor'],[`Inside C's`,'B() returns; C\u2019s body runs last.','Inside C\u2019s constructor']]},
+'this overrides show() in A':{t:'Override (B overrides show())',s:[['B subOb = new B(1, 2, 3);','Create a B object; constructor B(1, 2, 3) runs.'],['super(a, b);','Calls A(1, 2): i = 1, j = 2.'],['k = c;','k = 3.'],['subOb.show();','Call show() on a B object.'],['void show() {','B\u2019s show() overrides A\u2019s, so B\u2019s version runs.',null,1],['System.out.println(\"k: \"','Prints k only.','k: 3']]},
+'class Dispatch':{t:'Dispatch (run-time polymorphism)',s:[['A a = new A();','An object of type A.'],['B b = new B();','An object of type B.'],['C c = new C();','An object of type C.'],['A r;','r is a reference of the superclass type A.'],['r = a;','r refers to an A object.'],['r.callme(); // calls A','The object type is A, so A\u2019s callme() runs.','Inside A\u2019s callme method'],['r = b;','Same variable r, now refers to a B object.'],['r.callme(); // calls B','The object type is B, so B\u2019s callme() runs.','Inside B\u2019s callme method'],['r = c;','r now refers to a C object.'],['r.callme(); // calls C','The object type is C, so C\u2019s callme() runs.','Inside C\u2019s callme method']]},
+'class FindAreas':{t:'FindAreas (polymorphism)',s:[['Figure f = new Figure(10, 10);','A plain Figure object.'],['Rectangle r = new Rectangle(9, 5);','Rectangle: super(a, b) sets dim1 = 9, dim2 = 5.'],['Triangle t = new Triangle(10, 8);','Triangle: dim1 = 10, dim2 = 8.'],['figref = r;','The Figure reference now points to the Rectangle.'],['figref.area()','The object is a Rectangle, so Rectangle\u2019s area() runs: 9 x 5.','Inside Area for Rectangle.\nArea is 45'],['figref = t;','Now points to the Triangle.'],['figref.area()','Triangle\u2019s area() runs: 10 x 8 / 2.','Inside Area for Triangle.\nArea is 40',1],['figref = f;','Now points to the plain Figure.'],['figref.area()','Figure\u2019s own area() runs: it is only a placeholder.','Area for Figure is undefined.\nArea is 0',2]]},
+'class AbstractDemo':{t:'AbstractDemo',s:[['B b = new B();','Only B (concrete) is instantiated; A is abstract and cannot be.'],['b.callme();','B\u2019s implementation of the abstract method runs.',`B's implementation of callme.`],['b.callmetoo();','The concrete method inherited from the abstract class A runs.','This is a concrete method.']]},
+'class AbstractAreas':{t:'AbstractAreas',s:[['Rectangle r = new Rectangle(9, 5);','Allowed: Rectangle is concrete.'],['Figure figref;','A reference of the abstract type: no object is created.'],['figref = r;','figref points to the Rectangle.'],['figref.area()','Run-time dispatch picks Rectangle\u2019s area().','Inside Area for Rectangle.\nArea is 45'],['figref = t;','Now points to the Triangle.'],['figref.area()','Triangle\u2019s area() runs.','Inside Area for Triangle.\nArea is 40',1]]}
+};
+Object.keys(D).forEach(function(k){var d=D[k];var p=pres.filter(function(x){return x.textContent.indexOf(k)>-1})[0];if(!p)return;
+var w=document.createElement('div');w.className='demo';
+w.innerHTML='<b>▶ Live demo: '+d.t+'</b> <button>Step ▶</button><button>Reset ↺</button><div class="dn">Press Step to begin.</div><pre class="out dout"></pre>';
+p.after(w);var i=0,b=$('button',w),bs=b[0],br=b[1],dn=$('.dn',w)[0],o=$('.dout',w)[0];
+var clr=function(){$('.on',p).forEach(function(x){x.classList.remove('on')})};
+br.onclick=function(){i=0;clr();dn.textContent='Press Step to begin.';o.textContent='';bs.disabled=false};
+bs.onclick=function(){clr();var st=d.s[i++];var ls=$('.cl',p).filter(function(x){return x.textContent.indexOf(st[0])>-1});var l=ls[st[3]||0];if(l){l.classList.add('on');l.scrollIntoView({block:'nearest'})}
+dn.textContent='Step '+i+'/'+d.s.length+': '+st[1];if(st[2])o.textContent+=(o.textContent?'\n':'')+st[2];if(i>=d.s.length){bs.disabled=true;dn.textContent+=' ✔ Done.'}};
+});
+})();
+</script></body></html>
